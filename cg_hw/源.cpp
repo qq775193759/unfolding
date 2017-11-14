@@ -32,16 +32,21 @@ void input(const char* filename, vector<double> &x, vector<double> &y)
 	}
 }
 
+void on_key(int event,int x,int y,int flags,void *ustc)  
+{
+}
+
 int main()
 {
 	vector<double> x;
 	vector<double> y;
 	input("input.txt", x, y);
-	cout<<"aaa"<<endl;
 	Unfold_2D test(x,y);
-	cout<<"aaa"<<endl;
-	imshow("result", paintxy(test));
-
-	waitKey();
+	while(1)
+	{
+		imshow("result", paintxy(test));
+		waitKey();
+		test = test.transform();
+	}
 	return 0;
 }

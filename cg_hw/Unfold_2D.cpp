@@ -1,16 +1,26 @@
 #include "Unfold_2D.h"
 
 
-Unfold_2D::Unfold_2D(vector<double> ptheta, vector<double> plenth, double x1, double y1):theta(ptheta), lenth(plenth)
-{
-	x.push_back(x1);
-	y.push_back(y1);
-	theta2xy();
-}
-
 Unfold_2D::Unfold_2D(vector<double> px, vector<double> py):x(px),y(py)
 {
 	xy2theta();
+}
+
+Unfold_2D::Unfold_2D(Unfold_2D p2d, int k, double small_delta):x(p2d.x),y(p2d.y),theta(p2d.theta), lenth(p2d.lenth)
+{
+	theta[k]+=small_delta;
+	theta2xy();
+}
+
+Unfold_2D::Unfold_2D(Unfold_2D p2d, vector<double> delta_theta, double step_len):theta(p2d.theta), lenth(p2d.lenth)
+{
+	x.push_back(p2d.x[0]);
+	y.push_back(p2d.y[0]);
+	for(int i=0;i<theta.size();i++)
+	{
+		theta[i] += delta_theta[i]*(-step_len);
+	}
+	theta2xy();
 }
 
 void Unfold_2D::xy2theta()
@@ -21,7 +31,7 @@ void Unfold_2D::xy2theta()
 	{
 		double ttheta,tlenth;
 		tlenth = sqrt((x[i]-x[i-1])*(x[i]-x[i-1])+(y[i]-y[i-1])*(y[i]-y[i-1]));
-		ttheta = atan2(x[i]-x[i-1], y[i]-y[i-1]);
+		ttheta = atan2(y[i]-y[i-1], x[i]-x[i-1]);
 		theta.push_back(ttheta);
 		lenth.push_back(tlenth);
 	}
@@ -58,18 +68,38 @@ double Unfold_2D::cal_energy()
 			double t_res = distance(i, j)+distance(i, j+1)-distance(j, j+1);
 			res += 1/(t_res*t_res);
 		}
+	return res;
 }
 
-double Unfold_2D::cal_delta_energy(int k)
+double Unfold_2D::cal_delta_energy(int k, double small_delta, double energy)
 {
-	double res;
+	Unfold_2D tmp_unfold_2d(*this, k, small_delta);
+	double res = (tmp_unfold_2d.cal_energy() - energy)/small_delta;
 	return res;
 }
 
 vector<double> Unfold_2D::cal_delta_theta()
 {
 	vector<double> res = theta;
+	double energy = cal_energy();
+	double res_sum = 0;
 	for(int i=0;i<res.size();i++)
-		res[i] = cal_delta_energy(i);
+	{
+		res[i] = cal_delta_energy(i, 0.0001, energy);
+		res_sum += res[i]*res[i];
+	}
+	res_sum = sqrt(res_sum);
+	for(int i=0;i<res.size();i++)
+	{
+		res[i] = res[i]/res_sum;
+		cout<<res[i]<<" ";
+	}
+	cout<<endl;
 	return res;
+}
+
+Unfold_2D Unfold_2D::transform()
+{
+	vector<double> delta_theta = cal_delta_theta();
+	return Unfold_2D(*this, delta_theta, 0.01);
 }
