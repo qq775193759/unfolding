@@ -21,5 +21,8 @@ public:
 	double cal_delta_energy(int k, double small_delta, double energy);
 	vector<double> cal_delta_theta();//calculate delta_theta
 	Unfold_2D transform();
+
+	static vector<int> v_depth1, v_depth2, e_depth;
+	int check_depth(int i, int j);
 };
 
