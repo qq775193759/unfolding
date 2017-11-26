@@ -81,16 +81,30 @@ double Unfold_2D::cal_delta_energy(int k, double small_delta, double energy)
 	return res;
 }
 
+
+void thread_fun_cal_delta_energy(int k, double small_delta, double energy, Unfold_2D u2d, double& res)
+{
+	Unfold_2D tmp_unfold_2d(u2d, k, small_delta);
+	res = (tmp_unfold_2d.cal_energy() - energy)/small_delta;
+}
+
 vector<double> Unfold_2D::cal_delta_theta()
 {
 	vector<double> res = theta;
+	vector<thread> threads(res.size());
 	double energy = cal_energy();
 	cout<<energy<<endl;
 	double res_sum = 0;
 	for(int i=0;i<res.size();i++)
 	{
-		res[i] = cal_delta_energy(i, 0.0001, energy);
+		//res[i] = cal_delta_energy(i, 0.0001, energy);
+		threads[i] = thread(thread_fun_cal_delta_energy, i, 0.0001, energy, *this, ref(res[i]));
+		//thread_fun_cal_delta_energy(i, 0.0001, energy, *this, res[i]);
 		//cout<<res[i]<<endl;
+	}
+	for(int i=0;i<res.size();i++)
+	{
+		threads[i].join();
 	}
 	for(int i=0;i<res.size();i++)
 	{
