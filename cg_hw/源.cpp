@@ -6,8 +6,8 @@
 using namespace std;
 using namespace cv;
 
-const int WINDOW_SIZE_X = 800;
-const int WINDOW_SIZE_Y = 600;
+const int WINDOW_SIZE_X = 1000;
+const int WINDOW_SIZE_Y = 1200;
 
 
 
@@ -27,18 +27,23 @@ int main()
 	vector<double> y;
 	//input("input.txt", x, y);
 	//read_3d("bunny_y.txt", x, y);
-	read_3d("bunny_y.txt", x, y);
+	//read_path_3d("bunny_log", x, y);
+	read_3d("fox_y.txt", x, y);
 	Unfold_2D test(x,y);
 	int n = 0;
+	double delta = 0.01;
 	while(1)
 	{
 		//imshow("result", paintxy(test));
 		//waitKey();
-		test = test.transform();
-		print_path_3d("bunny_log", test);
+		test = test.transform(delta);
+		print_path_3d("fox_log", test);
 		if(n%10 == 0)
 			imwrite(getoutname(n), paintxy(test));
 		n++;
 	}
+	/*read_path_3d("fox_log_1", x, y);
+	Unfold_2D test(x,y);
+	print_path_3d("fox_log", test);*/
 	return 0;
 }

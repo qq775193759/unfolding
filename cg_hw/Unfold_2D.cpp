@@ -126,6 +126,12 @@ Unfold_2D Unfold_2D::transform()
 	return Unfold_2D(*this, delta_theta, 0.01);
 }
 
+Unfold_2D Unfold_2D::transform(double delta)
+{
+	vector<double> delta_theta = cal_delta_theta();
+	return Unfold_2D(*this, delta_theta, delta);
+}
+
 vector<int> Unfold_2D::v_depth1, Unfold_2D::v_depth2, Unfold_2D::e_depth;
 
 int Unfold_2D::check_depth(int i, int j)
