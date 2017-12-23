@@ -18,8 +18,10 @@ void input(const char* filename, vector<double> &x, vector<double> &y)
 	}
 }
 
-const int INIT_X = 800;
-const int INIT_Y = 1000;
+const int INIT_X = 300;
+const int INIT_Y = 500;
+const int DELTA_X = 40;
+const int DELTA_Y = -40;
 
 void read_3d(const char* filename, vector<double> &x, vector<double> &y)
 {
@@ -42,9 +44,9 @@ void read_3d(const char* filename, vector<double> &x, vector<double> &y)
 			tmp_depth1 = tmp_depth2;
 			//cout<<x.back()<<" "<<y.back()<<" "<<Unfold_2D::v_depth1.back()<<" "<<Unfold_2D::v_depth2.back()<<endl;
 		}
-		tmp_x += dx[a]*10;
+		tmp_x += dx[a]*DELTA_X;
 		tmp_depth2 += dy[a];
-		tmp_y += dz[a]*10;
+		tmp_y += dz[a]*DELTA_Y;
 		old_a = a;
 	}
 }
@@ -68,7 +70,7 @@ void read_2d_config_from_3d(const char* filename, vector<double> &x, vector<doub
 	int tmp_x = INIT_X, tmp_y= INIT_Y;
 	while(fin>>a)
 	{
-		if(a != old_a)
+		if(dx[a] != dx[old_a])
 		{
 			//record
 			x.push_back(tmp_x);
@@ -78,6 +80,7 @@ void read_2d_config_from_3d(const char* filename, vector<double> &x, vector<doub
 		tmp_y += dy[a]*3;
 		old_a = a;
 	}
+	cout<<x.size()<<endl;
 }
 
 void read_path_3d(const char* filename, vector<double> &x, vector<double> &y)
@@ -110,19 +113,21 @@ void read_path_3d(const char* filename, vector<double> &x, vector<double> &y)
 }
 
 
-
-void print_path_3d(const char* filename, Unfold_2D u2d)
+void print_config_3d(const char* filename, Unfold_2D u2d)
 {
-	ofstream fout(filename, ios::app);
+	ofstream fout(filename);
 	int depth = 0;
+	cout<<u2d.v_depth1.size()<<endl;
+	cout<<u2d.v_depth2.size()<<endl;
+	cout<<u2d.e_depth.size()<<endl;
+	cout<<u2d.x.size()<<endl;
 	fout<<u2d.x.size()<<" ";
 	for(int i=0;i<u2d.x.size();i++)
 	{
-		fout<<u2d.x[i]<<" "<<u2d.y[i]<<" "<<depth<<" ";
+		fout<<depth<<" ";
 		depth = Unfold_2D::e_depth[i];
-		
+		fout<<depth<<" ";
 	}
-	fout<<depth<<" ";
 	fout<<endl;
 	fout.close();
 }

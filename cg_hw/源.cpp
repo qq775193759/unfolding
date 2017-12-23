@@ -6,8 +6,8 @@
 using namespace std;
 using namespace cv;
 
-const int WINDOW_SIZE_X = 1000;
-const int WINDOW_SIZE_Y = 1200;
+const int WINDOW_SIZE_X = 800;
+const int WINDOW_SIZE_Y = 600;
 
 
 
@@ -20,28 +20,33 @@ Mat paintxy(Unfold_2D unfold_2d)
 }
 
 
-
 int main()
 {
 	vector<double> x;
 	vector<double> y;
-	//input("input.txt", x, y);
-	//read_3d("bunny_y.txt", x, y);
-	//read_path_3d("bunny_log", x, y);
-	read_3d("fox_y.txt", x, y);
+	read_3d("bunny_y.txt", x, y);
+	//read_3d("fox_y.txt", x, y);
+	//read_3d("eight_x.txt", x, y);
+	//read_3d("path_duck.txt", x, y);
+	//read_path_3d("restart.txt", x, y);
+	//read_2d_config_from_3d("fox_y.txt", x, y);
+	//read_2d_config_from_3d("eight_x.txt", x, y);
 	Unfold_2D test(x,y);
 	int n = 0;
 	double delta = 0.01;
-	while(1)
+	print_config_3d("bunny_config", test);
+	print_path_2d("bunny_init", test);
+	//imwrite(getoutname(n), paintxy(test));
+	while(0)
 	{
-		//imshow("result", paintxy(test));
-		//waitKey();
+		imshow("result", paintxy(test));
+		waitKey();
 		test = test.transform(delta);
-		print_path_3d("fox_log", test);
-		if(n%10 == 0)
+		if(n%50 == 0)
 			imwrite(getoutname(n), paintxy(test));
 		n++;
 	}
+	//cin>>n;
 	/*read_path_3d("fox_log_1", x, y);
 	Unfold_2D test(x,y);
 	print_path_3d("fox_log", test);*/
